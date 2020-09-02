@@ -16,7 +16,6 @@ const components = {
 export class DynamicFieldDirective implements OnInit, OnChanges, OnDestroy {
   @Input() config;
   @Input() group: FormGroup;
-  @Input() headerActionValue;
 
   component;
 
@@ -24,16 +23,19 @@ export class DynamicFieldDirective implements OnInit, OnChanges, OnDestroy {
               private container: ViewContainerRef) {}
 
   ngOnInit() {
-    const component = components[this.config.itemDetails.type];
+    const component = components[this.config.type];
     // component factory code to create a component, associate it to the template, and set it's properties.
     const factory = this.resolver.resolveComponentFactory<any>(component);
     this.component = this.container.createComponent(factory);
-    this.component.instance.config = this.config.itemDetails;
-    if (this.config.itemDetails.name) {                                          // check whether this is a component or a group
-      this.component.instance.group = this.group;
-    } else {
-      this.component.instance.group = this.group.get([this.config.groupName]);
-    }
+    console.log('component', this.config.type, component);
+    this.component.instance.config = this.config;
+    this.component.instance.group = this.group;
+    // todo: nested group for the form model's sake?
+    // if (this.config.name) {                                          // check whether this is a component or a group
+    
+    // } else {
+      // this.component.instance.group = this.group.get([this.config.groupName]);
+    // }
     // potential code to add classes to the actual components (ex: app-mat-input)
     // if(this.config.itemDetails.componentRole) {
     //   this.renderer.addClass(this.component.location.nativeElement, this.config.itemDetails.componentRole);
@@ -49,9 +51,9 @@ export class DynamicFieldDirective implements OnInit, OnChanges, OnDestroy {
       // } else {
       //   this.component.instance.group = this.group.get([this.config.name]);
       // }
-      if (this.component.instance.headerActionListener) {
-        this.component.instance.headerActionListener(this.headerActionValue);
-      }
+      // if (this.component.instance.headerActionListener) {
+      //   this.component.instance.headerActionListener(this.headerActionValue);
+      // }
     }
   }
 

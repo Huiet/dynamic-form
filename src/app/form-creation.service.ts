@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { throwError } from 'rxjs';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 // designates config.itemDetails.types that should not be tracked by form changes (explicitly interact with state outside of form)
 const untrackedConfigTypes = [
@@ -38,19 +38,28 @@ export class FormCreationService implements OnDestroy {
     formGroup.addControl(groupName, group);                             // append to the formGroup coming in.
   }
 
+
+  buildFormFromConfig(config): FormGroup {
+    const group = this.fb.group({});
+    for (const element of config) {
+      group.addControl(element.name, this.createControl(element));
+    }
+    return group;
+  }
+
   createControl(config: any) {
     let validation = null;
-    if (config.itemDetails.validators) {
-      validation = this.addControlValidation(config.itemDetails.validators);
+    if (config.validators) {
+      validation = this.addControlValidation(config.validators);
     }
-    const control = this.fb.control({ disabled: config.itemDetails.disabled, value: null }, validation);
-    let controlValue = this.getDynamicControlValueFromData(config.itemDetails.sourcePath);
-    if (dateConfigTypes.includes(config.itemDetails.type)) {
+    const control = this.fb.control({ disabled: config.disabled, value: null }, validation);
+    let controlValue = this.getDynamicControlValueFromData(config.sourcePath);
+    if (dateConfigTypes.includes(config.type)) {
       controlValue = new Date(controlValue).toISOString();
     }
     // add an association between name, value, and path in data for state updates.
-    if (!untrackedConfigTypes.includes(config.itemDetails.type)) {      // Todo: REPLACE THIS WITH CONFIG VARIABLE
-      this.formControlToSourcePathMap[config.itemDetails.name] = config.itemDetails.sourcePath;
+    if (!untrackedConfigTypes.includes(config.type)) {      // Todo: REPLACE THIS WITH CONFIG VARIABLE
+      this.formControlToSourcePathMap[config.name] = config.sourcePath;
     }
     control.setValue(controlValue);
     return control;

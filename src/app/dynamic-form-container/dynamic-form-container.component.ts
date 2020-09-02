@@ -28,15 +28,17 @@ export class DynamicFormContainerComponent implements OnInit {
               private utilitiesService: UtilitiesService,
               private dataService: DataService) {
     const routerData = this.route.snapshot.data;
-    this.configPayload = routerData.config;
-    this.dataPayload = routerData.dataPayload;
+    this.configPayload = routerData.payload.config;
+    this.dataPayload = routerData.payload.dataPayload;
   }
 
   ngOnInit(): void {
     this.formCreationService.data = this.dataPayload;
     // builds the formgroup
-    this.formCreationService.buildFormFromSpec(this.configPayload, this.formGroup, this.configPayload.groupName);
-
+    console.log(this.configPayload);
+    // this.formCreationService.buildFormFromSpec(this.configPayload.itemDetails, this.formGroup, this.configPayload.groupName);
+    this.formGroup = this.formCreationService.buildFormFromConfig(this.configPayload.elements);
+    console.log(this.formGroup.getRawValue());
     this.currentFormGroupValue = this.formGroup.value;
     if (this.formChangeSub) {
       this.formChangeSub.unsubscribe();
