@@ -1,5 +1,5 @@
 <form class="{{config.role}}" [formGroup]="group">
-    <ng-container appDynamicField [config]="config" [group]="group">
+    <ng-container *ngFor="let element of config" appDynamicField [config]="element" [group]="group">
     </ng-container>
-    </form>
+</form>
     

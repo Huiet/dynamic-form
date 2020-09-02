@@ -5,6 +5,7 @@ import { DynamicFormResolver } from './resolvers/dynamic-from.resolver';
 
 
 const routes: Routes = [
+  { path: '', redirectTo: 'dynamic-form', pathMatch: 'full' },
   {
     path: 'dynamic-form', component: DynamicFormContainerComponent,
     resolve: {
